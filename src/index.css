@@ -3,4 +3,25 @@
 @tailwind utilities;
 
 html, body, #root { height: 100%; }
-body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  background: linear-gradient(180deg, #123a63 0%, #0f2140 60%, #0f2140 100%);
+  background-attachment: fixed;
+  color: #fff;
+}
+
+input, select, textarea {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+select option {
+  background-color: #12233f;
+  color: #fff;
+}
+input[type='checkbox'], input[type='radio'] {
+  accent-color: #2563eb;
+}

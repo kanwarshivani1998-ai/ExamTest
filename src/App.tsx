@@ -32,7 +32,7 @@ export default function App() {
 
   if (!ready) {
     return (
-      <div className="flex h-screen items-center justify-center bg-brand-50 text-brand-800">
+      <div className="flex h-screen items-center justify-center bg-[#0f2140] text-white">
         <p className="text-sm">Loading… / लोड हो रहा है…</p>
       </div>
     )
