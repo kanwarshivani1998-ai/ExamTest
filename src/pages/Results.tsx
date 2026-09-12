@@ -11,11 +11,11 @@ export function ResultDetail() {
   const { lang } = useLang()
   const result = useLiveQuery(() => (resultId ? db.testResults.get(resultId) : undefined), [resultId])
 
-  if (!result) return <p className="p-4 text-sm text-gray-500">{bi('Loading...', 'लोड हो रहा है...', lang)}</p>
+  if (!result) return <p className="p-4 text-sm text-gray-400">{bi('Loading...', 'लोड हो रहा है...', lang)}</p>
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Result', 'परिणाम', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Result', 'परिणाम', lang)}</h1>
       <Card>
         <CardContent className="grid grid-cols-2 gap-3 text-sm">
           <Stat label={bi('Marks Obtained', 'प्राप्त अंक', lang)} value={`${result.marksObtained} / ${result.maxMarks}`} />
@@ -31,7 +31,7 @@ export function ResultDetail() {
           <CardTitle>{bi('Subject-wise breakdown', 'विषयवार विवरण', lang)}</CardTitle>
           <div className="mt-2 space-y-2">
             {Object.entries(result.subjectWiseBreakdown).map(([sid, b]) => (
-              <div key={sid} className="flex items-center justify-between text-xs text-gray-600">
+              <div key={sid} className="flex items-center justify-between text-xs text-gray-300">
                 <span>{sid}</span>
                 <span>{b.correct}✓ {b.incorrect}✗ {b.skipped}– · {Math.round(b.marks * 100) / 100} {bi('marks', 'अंक', lang)}</span>
               </div>
@@ -46,9 +46,9 @@ export function ResultDetail() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-gray-50 p-3">
-      <p className="text-[11px] text-gray-500">{label}</p>
-      <p className="text-lg font-bold text-gray-900">{value}</p>
+    <div className="rounded-lg bg-white/10 p-3">
+      <p className="text-[11px] text-gray-400">{label}</p>
+      <p className="text-lg font-bold text-white">{value}</p>
     </div>
   )
 }
@@ -58,16 +58,16 @@ export function ResultsHistory() {
   const results = useLiveQuery(() => db.testResults.orderBy('submittedAt').reverse().toArray(), []) ?? []
   return (
     <div className="space-y-3 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Test History', 'टेस्ट इतिहास', lang)}</h1>
-      {results.length === 0 && <p className="text-sm text-gray-500">{bi('No tests taken yet.', 'अभी तक कोई टेस्ट नहीं दिया गया।', lang)}</p>}
+      <h1 className="text-lg font-bold text-white">{bi('Test History', 'टेस्ट इतिहास', lang)}</h1>
+      {results.length === 0 && <p className="text-sm text-gray-400">{bi('No tests taken yet.', 'अभी तक कोई टेस्ट नहीं दिया गया।', lang)}</p>}
       {results.map((r) => (
         <Link key={r.id} to={`/results/${r.id}`}>
           <Card><CardContent className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">{r.type}</p>
-              <p className="text-xs text-gray-500">{new Date(r.submittedAt).toLocaleString()}</p>
+              <p className="text-xs text-gray-400">{new Date(r.submittedAt).toLocaleString()}</p>
             </div>
-            <p className="text-sm font-semibold text-brand-700">{r.marksObtained}/{r.maxMarks}</p>
+            <p className="text-sm font-semibold text-brand-300">{r.marksObtained}/{r.maxMarks}</p>
           </CardContent></Card>
         </Link>
       ))}

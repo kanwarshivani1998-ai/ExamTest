@@ -17,11 +17,11 @@ export function ProgressPage() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Progress', 'प्रगति', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Progress', 'प्रगति', lang)}</h1>
       <Card><CardContent>
         <CardTitle>{bi('Overall Syllabus', 'समग्र पाठ्यक्रम', lang)}</CardTitle>
         <ProgressBar value={overall.percent} className="my-2" />
-        <p className="text-xs text-gray-500">{overall.completed}/{overall.total} {bi('topics completed', 'विषय पूर्ण', lang)} · {accuracy}% {bi('practice accuracy', 'अभ्यास शुद्धता', lang)}</p>
+        <p className="text-xs text-gray-400">{overall.completed}/{overall.total} {bi('topics completed', 'विषय पूर्ण', lang)} · {accuracy}% {bi('practice accuracy', 'अभ्यास शुद्धता', lang)}</p>
       </CardContent></Card>
       {subjects.map((s) => {
         const subjectTopics = topics.filter((t) => t.subjectId === s.id)
@@ -30,10 +30,10 @@ export function ProgressPage() {
           <Card key={s.id}><CardContent>
             <div className="flex items-center justify-between">
               <CardTitle>{bi(s.titleEn, s.titleHi, lang)}</CardTitle>
-              <span className="text-sm font-semibold text-brand-700">{p.percent}%</span>
+              <span className="text-sm font-semibold text-brand-300">{p.percent}%</span>
             </div>
             <ProgressBar value={p.percent} className="my-2" />
-            <p className="text-xs text-gray-500">{p.completed}/{p.total}</p>
+            <p className="text-xs text-gray-400">{p.completed}/{p.total}</p>
           </CardContent></Card>
         )
       })}

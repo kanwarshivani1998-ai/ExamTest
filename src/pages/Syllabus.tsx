@@ -73,39 +73,39 @@ export function Syllabus() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Syllabus', 'पाठ्यक्रम', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Syllabus', 'पाठ्यक्रम', lang)}</h1>
 
       <input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={bi('Search topics...', 'विषय खोजें...', lang)}
-        className="w-full rounded-xl border border-gray-300 p-3 text-sm"
+        className="w-full rounded-xl border border-white/20 p-3 text-sm"
       />
 
       <div className="flex flex-wrap gap-2">
-        <select className="rounded-lg border border-gray-300 p-2 text-xs" value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)}>
+        <select className="rounded-lg border border-white/20 p-2 text-xs" value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)}>
           <option value="">{bi('All subjects', 'सभी विषय', lang)}</option>
           {subjects.map((s) => <option key={s.id} value={s.id}>{bi(s.titleEn, s.titleHi, lang)}</option>)}
         </select>
-        <select className="rounded-lg border border-gray-300 p-2 text-xs" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TopicStatus | '')}>
+        <select className="rounded-lg border border-white/20 p-2 text-xs" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TopicStatus | '')}>
           <option value="">{bi('All statuses', 'सभी स्थितियां', lang)}</option>
           {Object.entries(STATUS_LABEL).map(([k, [en, hi]]) => <option key={k} value={k}>{bi(en, hi, lang)}</option>)}
         </select>
-        <select className="rounded-lg border border-gray-300 p-2 text-xs" value={confidenceFilter} onChange={(e) => setConfidenceFilter(e.target.value as Confidence | '')}>
+        <select className="rounded-lg border border-white/20 p-2 text-xs" value={confidenceFilter} onChange={(e) => setConfidenceFilter(e.target.value as Confidence | '')}>
           <option value="">{bi('All confidence', 'सभी आत्मविश्वास', lang)}</option>
           <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
         </select>
-        <select className="rounded-lg border border-gray-300 p-2 text-xs" value={importanceFilter} onChange={(e) => setImportanceFilter(e.target.value as Importance | '')}>
+        <select className="rounded-lg border border-white/20 p-2 text-xs" value={importanceFilter} onChange={(e) => setImportanceFilter(e.target.value as Importance | '')}>
           <option value="">{bi('All importance', 'सभी महत्व', lang)}</option>
           <option value="normal">Normal</option><option value="important">Important</option><option value="high_priority">High Priority</option>
         </select>
-        <select className="rounded-lg border border-gray-300 p-2 text-xs" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+        <select className="rounded-lg border border-white/20 p-2 text-xs" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
           <option value="order">{bi('Sort: Syllabus order', 'क्रम: पाठ्यक्रम', lang)}</option>
           <option value="completion">{bi('Sort: Completion', 'क्रम: पूर्णता', lang)}</option>
           <option value="priority">{bi('Sort: Priority', 'क्रम: प्राथमिकता', lang)}</option>
           <option value="lastStudied">{bi('Sort: Last studied', 'क्रम: अंतिम अध्ययन', lang)}</option>
         </select>
-        <label className="flex items-center gap-1 rounded-lg border border-gray-300 p-2 text-xs">
+        <label className="flex items-center gap-1 rounded-lg border border-white/20 p-2 text-xs">
           <input type="checkbox" checked={weakOnly} onChange={(e) => setWeakOnly(e.target.checked)} /> {bi('Weak only', 'केवल कमजोर', lang)}
         </label>
         <Button size="sm" variant="outline" onClick={clearFilters}>{bi('Clear Filters', 'फ़िल्टर हटाएं', lang)}</Button>
@@ -117,7 +117,7 @@ export function Syllabus() {
       {chips.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {chips.map((c, i) => (
-            <button key={i} onClick={c.onRemove} className="rounded-full bg-brand-100 px-3 py-1 text-xs text-brand-800">
+            <button key={i} onClick={c.onRemove} className="rounded-full bg-brand-500/30 px-3 py-1 text-xs text-brand-200">
               {c.label} ✕
             </button>
           ))}
@@ -134,7 +134,7 @@ export function Syllabus() {
                 className="flex w-full items-center justify-between p-3 text-left"
                 onClick={() => setCollapsedChapters((c) => ({ ...c, [chapter.id]: !(expandAll ? c[chapter.id] : !c[chapter.id]) }))}
               >
-                <span className="text-sm font-semibold text-gray-800">{bi(chapter.titleEn, chapter.titleHi, lang)}</span>
+                <span className="text-sm font-semibold text-white">{bi(chapter.titleEn, chapter.titleHi, lang)}</span>
                 {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
               </button>
               {!isCollapsed && (
@@ -147,7 +147,7 @@ export function Syllabus() {
             </Card>
           )
         })}
-        {chaptersToShow.length === 0 && <p className="text-sm text-gray-500">{bi('No topics match your filters.', 'आपके फ़िल्टर से कोई विषय मेल नहीं खाता।', lang)}</p>}
+        {chaptersToShow.length === 0 && <p className="text-sm text-gray-400">{bi('No topics match your filters.', 'आपके फ़िल्टर से कोई विषय मेल नहीं खाता।', lang)}</p>}
       </div>
     </div>
   )
@@ -156,10 +156,10 @@ export function Syllabus() {
 function TopicRow({ topic, lang }: { topic: Topic; lang: 'en' | 'hi' | 'both' }) {
   const [en, hi] = STATUS_LABEL[topic.status]
   return (
-    <div className="rounded-lg border border-gray-100 p-2">
+    <div className="rounded-lg border border-white/10 p-2">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-gray-800">{bi(topic.titleEn, topic.titleHi, lang)}</p>
+          <p className="text-sm font-medium text-white">{bi(topic.titleEn, topic.titleHi, lang)}</p>
           <div className="mt-1 flex flex-wrap gap-1">
             <Badge tone={topic.status === 'completed' ? 'success' : topic.status === 'weak' ? 'danger' : 'default'}>{bi(en, hi, lang)}</Badge>
             {topic.importance !== 'normal' && <Badge tone="warning">{topic.importance}</Badge>}
@@ -174,7 +174,7 @@ function TopicRow({ topic, lang }: { topic: Topic; lang: 'en' | 'hi' | 'both' })
         <Button size="sm" variant="outline" onClick={() => setTopicStatus(topic.id, 'completed')}>Mark Complete</Button>
         <Button size="sm" variant="outline" onClick={() => setTopicStatus(topic.id, 'weak')}>Mark Weak</Button>
         <select
-          className="rounded-md border border-gray-200 text-xs"
+          className="rounded-md border border-white/10 text-xs"
           value={topic.status}
           onChange={(e) => updateTopic(topic.id, { status: e.target.value as TopicStatus })}
         >

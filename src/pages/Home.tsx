@@ -8,10 +8,7 @@ import { useSubjects } from '@/hooks/useSyllabus'
 import { useQuestionStats } from '@/hooks/useQuestions'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { Progress } from '@/components/ui/Progress'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
 import { bi, useLang } from '@/lib/i18n'
-import { isOverdue, isDueToday } from '@/lib/spacedRepetition'
 import { formatMinutes } from '@/lib/utils'
 
 export function Home() {
@@ -24,9 +21,7 @@ export function Home() {
   const overall = computeProgress(topics)
 
   const weakCount = topics.filter((t) => t.status === 'weak').length
-  const revisionDueCount = topics.filter((t) => isOverdue(t.nextRevisionAt) || isDueToday(t.nextRevisionAt)).length
   const inProgressCount = topics.filter((t) => t.status === 'in_progress').length
-  const notStartedCount = topics.filter((t) => t.status === 'not_started').length
 
   const daysRemaining = useMemo(() => {
     if (!profile?.examDate) return null
@@ -40,47 +35,81 @@ export function Home() {
   const todayMinutes = topics
     .filter((t) => t.lastStudiedAt && new Date(t.lastStudiedAt).toDateString() === new Date().toDateString())
     .reduce((s, t) => s + t.studyMinutes, 0)
+  const dailyTarget = profile?.dailyStudyTargetMinutes ?? 60
 
   return (
     <div className="space-y-5 pb-4">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900">
-          {bi('Namaste', 'नमस्ते', lang)}{profile?.name ? `, ${profile.name}` : ''} 👋
-        </h1>
-        <p className="text-sm text-gray-600">
-          {profile?.targetPost === 'both' ? 'Junior Assistant / Commercial Assistant-II' : profile?.targetPost}
-          {daysRemaining !== null && daysRemaining >= 0 ? ` · ${daysRemaining} ${bi('days left', 'दिन शेष', lang)}` : ''}
-          {profile?.studyStreak ? ` · 🔥 ${profile.studyStreak} ${bi('day streak', 'दिन स्ट्रीक', lang)}` : ''}
+      <Card className="overflow-hidden bg-gradient-to-br from-brand-700 to-brand-900 p-5">
+        <p className="text-sm text-white/80">
+          {bi('Namaste', 'नमस्ते', lang)}{profile?.name ? `, ${profile.name}` : ' Aspirant'} 👋
         </p>
-      </div>
+        <h1 className="mt-1 text-2xl font-extrabold leading-tight text-white">
+          {bi('Start Today\u2019s Prep', 'आज की तैयारी शुरू करें', lang)}
+        </h1>
+        {(daysRemaining !== null && daysRemaining >= 0) && (
+          <p className="mt-1 text-xs text-white/70">{daysRemaining} {bi('days left', 'दिन शेष', lang)}</p>
+        )}
 
-      <Card>
-        <CardContent className="flex items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0">
-            <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90">
-              <circle cx="18" cy="18" r="16" fill="none" stroke="#e5e7eb" strokeWidth="4" />
+        <div className="mt-5 flex items-center gap-4">
+          <div className="relative h-24 w-24 shrink-0">
+            <svg viewBox="0 0 36 36" className="h-24 w-24 -rotate-90">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
               <circle
-                cx="18" cy="18" r="16" fill="none" stroke="#0d9488" strokeWidth="4"
+                cx="18" cy="18" r="16" fill="none" stroke="#60a5fa" strokeWidth="4"
                 strokeDasharray={`${overall.percent} 100`} strokeLinecap="round"
               />
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-brand-800">
+            <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-white">
               {overall.percent}%
             </span>
           </div>
-          <div className="grid flex-1 grid-cols-2 gap-1 text-xs text-gray-600">
-            <span>{bi('Completed', 'पूर्ण', lang)}: {overall.completed}/{overall.total}</span>
-            <span>{bi('In progress', 'जारी', lang)}: {inProgressCount}</span>
-            <span>{bi('Weak topics', 'कमजोर विषय', lang)}: {weakCount}</span>
-            <span>{bi('Revision due', 'पुनरावृत्ति देय', lang)}: {revisionDueCount}</span>
-            <span>{bi('Not started', 'शुरू नहीं', lang)}: {notStartedCount}</span>
-            <span>{bi('Accuracy', 'शुद्धता', lang)}: {accuracy}%</span>
+          <div className="grid flex-1 grid-cols-3 gap-2">
+            <div className="rounded-xl bg-white/10 p-2 text-center">
+              <p className="text-lg font-bold text-white">{overall.completed}</p>
+              <p className="text-[11px] text-white/70">{bi('Completed', 'पूर्ण', lang)}</p>
+            </div>
+            <div className="rounded-xl bg-white/10 p-2 text-center">
+              <p className="text-lg font-bold text-white">{inProgressCount}</p>
+              <p className="text-[11px] text-white/70">{bi('Learning', 'सीख रहे', lang)}</p>
+            </div>
+            <div className="rounded-xl bg-white/10 p-2 text-center">
+              <p className="text-lg font-bold text-white">{weakCount}</p>
+              <p className="text-[11px] text-white/70">{bi('Weak', 'कमजोर', lang)}</p>
+            </div>
           </div>
-        </CardContent>
+        </div>
+
+        <div className="mt-4 flex items-center gap-4 text-xs text-white/80">
+          <span>🔥 {profile?.studyStreak ?? 0} {bi('day streak', 'दिन स्ट्रीक', lang)}</span>
+          <span>⏳ {todayMinutes}/{dailyTarget} {bi('min today', 'मिनट आज', lang)}</span>
+        </div>
       </Card>
 
       <div>
-        <h2 className="mb-2 text-sm font-semibold text-gray-700">{bi('Quick actions', 'त्वरित कार्य', lang)}</h2>
+        <h2 className="mb-2 text-base font-bold text-white">{bi('Subject Progress', 'विषय प्रगति', lang)}</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {subjects.map((s) => {
+            const subjectTopics = topics.filter((t) => t.subjectId === s.id)
+            const p = computeProgress(subjectTopics)
+            const weak = subjectTopics.filter((t) => t.status === 'weak').length
+            return (
+              <Link key={s.id} to={`/syllabus?subject=${s.id}`}>
+                <Card className="p-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{bi(s.titleEn, s.titleHi, lang)}</CardTitle>
+                    <span className="text-sm font-bold text-brand-300">{p.percent}%</span>
+                  </div>
+                  <Progress value={p.percent} className="my-2" />
+                  <p className="text-xs text-gray-400">{p.completed}/{p.total} {bi('topics', 'विषय', lang)} · {weak} {bi('weak', 'कमजोर', lang)}</p>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+
+      <div>
+        <h2 className="mb-2 text-base font-bold text-white">{bi('Quick Actions', 'त्वरित कार्य', lang)}</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <QuickAction to="/practice" label={bi('Quick Test', 'त्वरित टेस्ट', lang)} />
           <QuickAction to="/mock-tests?type=pre" label={bi('Start Pre Mock', 'प्री मॉक शुरू करें', lang)} />
@@ -93,41 +122,13 @@ export function Home() {
         </div>
       </div>
 
-      <div>
-        <h2 className="mb-2 text-sm font-semibold text-gray-700">{bi('Subjects', 'विषय', lang)}</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {subjects.map((s) => {
-            const subjectTopics = topics.filter((t) => t.subjectId === s.id)
-            const p = computeProgress(subjectTopics)
-            const weak = subjectTopics.filter((t) => t.status === 'weak').length
-            return (
-              <Card key={s.id}>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>{bi(s.titleEn, s.titleHi, lang)}</CardTitle>
-                    <Badge tone="info">{p.percent}%</Badge>
-                  </div>
-                  <Progress value={p.percent} className="my-2" />
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>{p.completed}/{p.total} · {weak} weak</span>
-                    <Link to={`/syllabus?subject=${s.id}`}>
-                      <Button size="sm" variant="secondary">{bi('Continue', 'जारी रखें', lang)}</Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      </div>
-
       <Card>
         <CardContent>
           <CardTitle>{bi("Today's Goal", 'आज का लक्ष्य', lang)}</CardTitle>
-          <p className="mt-2 text-xs text-gray-600">
-            {formatMinutes(todayMinutes)} / {formatMinutes(profile?.dailyStudyTargetMinutes ?? 60)} {bi('studied today', 'आज पढ़ाई की', lang)}
+          <p className="mt-2 text-xs text-gray-300">
+            {formatMinutes(todayMinutes)} / {formatMinutes(dailyTarget)} {bi('studied today', 'आज पढ़ाई की', lang)}
           </p>
-          <Progress value={((todayMinutes) / (profile?.dailyStudyTargetMinutes ?? 60)) * 100} className="mt-2" />
+          <Progress value={(todayMinutes / dailyTarget) * 100} className="mt-2" />
         </CardContent>
       </Card>
 
@@ -135,19 +136,21 @@ export function Home() {
         <Card>
           <CardContent>
             <CardTitle>{bi('Recent activity', 'हालिया गतिविधि', lang)}</CardTitle>
-            <p className="mt-2 text-xs text-gray-600">
+            <p className="mt-2 text-xs text-gray-300">
               {bi('Latest test', 'नवीनतम टेस्ट', lang)}: {results[0].correct}/{results[0].totalQuestions} {bi('correct', 'सही', lang)} · {results[0].marksObtained}/{results[0].maxMarks} {bi('marks', 'अंक', lang)}
             </p>
           </CardContent>
         </Card>
       )}
+
+      <p className="text-center text-[11px] text-gray-500">{bi('Accuracy', 'शुद्धता', lang)}: {accuracy}%</p>
     </div>
   )
 }
 
 function QuickAction({ to, label }: { to: string; label: string }) {
   return (
-    <Link to={to} className="rounded-xl border border-gray-200 bg-white p-3 text-center text-xs font-medium text-brand-800 shadow-sm hover:bg-brand-50">
+    <Link to={to} className="rounded-xl border border-white/10 bg-white/[0.06] p-3 text-center text-xs font-medium text-white shadow-sm hover:bg-white/10">
       {label}
     </Link>
   )
