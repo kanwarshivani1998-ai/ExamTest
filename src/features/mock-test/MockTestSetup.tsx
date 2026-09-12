@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAllQuestions, pickQuestions } from '@/hooks/useQuestions'
 import { useSubjects } from '@/hooks/useSyllabus'
 import { useQuestionStats } from '@/hooks/useQuestions'
@@ -12,9 +11,6 @@ import { bi, useLang } from '@/lib/i18n'
 export function MockTestSetup() {
   const { lang } = useLang()
   const navigate = useNavigate()
-  const [params] = useSearchParams()
-  const typeParam = params.get('type') // pre | main | subject | custom | important
-  const subjectId = params.get('subject') ?? undefined
   const allQuestions = useAllQuestions()
   const subjects = useSubjects()
   const stats = useQuestionStats()

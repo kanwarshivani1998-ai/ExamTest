@@ -15,10 +15,11 @@ export function MockTestRunner() {
   const { lang, setLang } = useLang()
   const navigate = useNavigate()
   const session = useSession(sessionId)
-  const questions: Question[] = useLiveQuery(
+  const liveQuestions = useLiveQuery(
     async (): Promise<Question[]> => (session ? db.questions.where('id').anyOf(session.questionIds).toArray() : []),
     [session?.id]
-  ) ?? []
+  )
+  const questions: Question[] = useMemo(() => liveQuestions ?? [], [liveQuestions])
 
   const [index, setIndex] = useState(0)
   const [remaining, setRemaining] = useState<number>(session?.remainingSeconds ?? 0)
@@ -27,6 +28,7 @@ export function MockTestRunner() {
 
   useEffect(() => {
     if (session) setRemaining(session.remainingSeconds)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id])
 
   const orderedQuestions = useMemo(() => {
@@ -62,6 +64,7 @@ export function MockTestRunner() {
       })
     }, 1000)
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id, session?.status, doSubmit])
 
   if (!session) return <p className="p-4 text-sm text-gray-500">Loading session...</p>
