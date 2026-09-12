@@ -27,18 +27,18 @@ export function Settings() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Settings', 'सेटिंग्स', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Settings', 'सेटिंग्स', lang)}</h1>
 
       <Card><CardContent className="space-y-3">
         <CardTitle>{bi('Profile', 'प्रोफ़ाइल', lang)}</CardTitle>
-        <input value={name} onChange={(e) => setName(e.target.value)} onBlur={saveName} placeholder={bi('Your name', 'आपका नाम', lang)} className="w-full rounded-lg border border-gray-300 p-2 text-sm" />
+        <input value={name} onChange={(e) => setName(e.target.value)} onBlur={saveName} placeholder={bi('Your name', 'आपका नाम', lang)} className="w-full rounded-lg border border-white/20 p-2 text-sm" />
       </CardContent></Card>
 
       <Card><CardContent className="space-y-3">
         <CardTitle>{bi('Language', 'भाषा', lang)}</CardTitle>
         <div className="flex gap-2">
           {(['en', 'hi', 'both'] as LangMode[]).map((l) => (
-            <button key={l} onClick={() => changeLang(l)} className={`rounded-lg border px-3 py-1.5 text-sm ${lang === l ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>
+            <button key={l} onClick={() => changeLang(l)} className={`rounded-lg border px-3 py-1.5 text-sm ${lang === l ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>
               {l === 'en' ? 'English' : l === 'hi' ? 'हिंदी' : 'EN + HI'}
             </button>
           ))}
@@ -49,7 +49,7 @@ export function Settings() {
         <CardTitle>{bi('Daily Study Target', 'दैनिक अध्ययन लक्ष्य', lang)}</CardTitle>
         <div className="flex gap-2">
           {[30, 60, 120, 180].map((m) => (
-            <button key={m} onClick={() => saveProfile({ dailyStudyTargetMinutes: m })} className={`rounded-lg border px-3 py-1.5 text-sm ${profile?.dailyStudyTargetMinutes === m ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>
+            <button key={m} onClick={() => saveProfile({ dailyStudyTargetMinutes: m })} className={`rounded-lg border px-3 py-1.5 text-sm ${profile?.dailyStudyTargetMinutes === m ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>
               {m}m
             </button>
           ))}
@@ -58,7 +58,7 @@ export function Settings() {
 
       <Card><CardContent className="space-y-3">
         <CardTitle>{bi('Exam Date', 'परीक्षा तिथि', lang)}</CardTitle>
-        <input type="date" value={profile?.examDate ?? ''} onChange={(e) => saveProfile({ examDate: e.target.value || null })} className="w-full rounded-lg border border-gray-300 p-2 text-sm" />
+        <input type="date" value={profile?.examDate ?? ''} onChange={(e) => saveProfile({ examDate: e.target.value || null })} className="w-full rounded-lg border border-white/20 p-2 text-sm" />
       </CardContent></Card>
 
       <Card><CardContent className="space-y-3">
