@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RVUNL Question",
+  "type": "object",
+  "required": ["id", "examStage", "subjectId", "chapterId", "topicId", "questionEn", "questionHi", "optionsEn", "optionsHi", "correctIndex", "explanationEn", "explanationHi", "difficulty", "marks", "negativePenaltyRate", "sourceType"],
+  "properties": {
+    "id": { "type": "string" },
+    "examStage": { "type": "string", "enum": ["pre", "main", "both"] },
+    "subjectId": { "type": "string" },
+    "chapterId": { "type": "string" },
+    "topicId": { "type": "string" },
+    "questionEn": { "type": "string" },
+    "questionHi": { "type": "string" },
+    "optionsEn": { "type": "array", "items": { "type": "string" }, "minItems": 4, "maxItems": 4 },
+    "optionsHi": { "type": "array", "items": { "type": "string" }, "minItems": 4, "maxItems": 4 },
+    "correctIndex": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "explanationEn": { "type": "string" },
+    "explanationHi": { "type": "string" },
+    "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+    "marks": { "type": "number" },
+    "negativePenaltyRate": { "type": "number" },
+    "sourceType": { "type": "string", "enum": ["sample", "ai", "official"] },
+    "sourceTitle": { "type": "string" },
+    "sourceUrl": { "type": "string" },
+    "year": { "type": "integer" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "currentAffairsMonth": { "type": "integer" },
+    "currentAffairsYear": { "type": "integer" }
+  }
+}
