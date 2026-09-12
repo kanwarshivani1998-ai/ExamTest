@@ -67,27 +67,27 @@ export function Backup() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Data Backup', 'डेटा बैकअप', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Data Backup', 'डेटा बैकअप', lang)}</h1>
       <Card><CardContent className="space-y-3">
         <CardTitle>{bi('Export', 'निर्यात करें', lang)}</CardTitle>
-        <p className="text-xs text-gray-500">{bi('Download all your offline study data as a JSON file.', 'अपना सारा ऑफलाइन अध्ययन डेटा JSON फ़ाइल के रूप में डाउनलोड करें।', lang)}</p>
+        <p className="text-xs text-gray-400">{bi('Download all your offline study data as a JSON file.', 'अपना सारा ऑफलाइन अध्ययन डेटा JSON फ़ाइल के रूप में डाउनलोड करें।', lang)}</p>
         <Button onClick={exportBackup}>{bi('Export Backup', 'बैकअप निर्यात करें', lang)}</Button>
       </CardContent></Card>
 
       <Card><CardContent className="space-y-3">
         <CardTitle>{bi('Restore', 'पुनर्स्थापित करें', lang)}</CardTitle>
-        <p className="text-xs text-gray-500">{bi('Restoring will overwrite your current data.', 'पुनर्स्थापित करने से आपका वर्तमान डेटा अधिलेखित हो जाएगा।', lang)}</p>
+        <p className="text-xs text-gray-400">{bi('Restoring will overwrite your current data.', 'पुनर्स्थापित करने से आपका वर्तमान डेटा अधिलेखित हो जाएगा।', lang)}</p>
         <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => e.target.files?.[0] && setConfirmRestore(e.target.files[0])} />
         <Button variant="outline" onClick={() => fileRef.current?.click()}>{bi('Choose Backup File', 'बैकअप फ़ाइल चुनें', lang)}</Button>
       </CardContent></Card>
 
       <Card><CardContent className="space-y-3">
         <CardTitle className="text-red-600">{bi('Reset All Data', 'सभी डेटा रीसेट करें', lang)}</CardTitle>
-        <p className="text-xs text-gray-500">{bi('Permanently deletes all your offline data on this device.', 'इस डिवाइस पर आपका सारा ऑफलाइन डेटा स्थायी रूप से हटा देता है।', lang)}</p>
+        <p className="text-xs text-gray-400">{bi('Permanently deletes all your offline data on this device.', 'इस डिवाइस पर आपका सारा ऑफलाइन डेटा स्थायी रूप से हटा देता है।', lang)}</p>
         <Button variant="destructive" onClick={() => setConfirmReset(true)}>{bi('Reset All Data', 'सभी डेटा रीसेट करें', lang)}</Button>
       </CardContent></Card>
 
-      {status && <p className="text-xs text-brand-700">{status}</p>}
+      {status && <p className="text-xs text-brand-300">{status}</p>}
 
       <Dialog open={!!confirmRestore} onClose={() => setConfirmRestore(null)} title={bi('Restore backup?', 'बैकअप पुनर्स्थापित करें?', lang)}
         footer={<>
