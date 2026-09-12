@@ -50,14 +50,14 @@ export function Planner() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Study Planner', 'अध्ययन योजनाकार', lang)}</h1>
-      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="rounded-lg border border-gray-300 p-2 text-sm" />
+      <h1 className="text-lg font-bold text-white">{bi('Study Planner', 'अध्ययन योजनाकार', lang)}</h1>
+      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="rounded-lg border border-white/20 p-2 text-sm" />
 
       <Card><CardContent>
         <CardTitle>{bi('Recommended for today', 'आज के लिए अनुशंसित', lang)}</CardTitle>
         <div className="mt-2 flex flex-col gap-2">
           {recommendations.map((r, i) => (
-            <div key={i} className="flex items-center justify-between rounded-lg bg-gray-50 p-2 text-xs">
+            <div key={i} className="flex items-center justify-between rounded-lg bg-white/10 p-2 text-xs">
               <span>{r.label}</span>
               <Button size="sm" variant="outline" onClick={() => addTask(r.label, r.type, r.refId)}>{bi('Add', 'जोड़ें', lang)}</Button>
             </div>
@@ -70,11 +70,11 @@ export function Planner() {
           <CardTitle>{bi('Daily Summary', 'दैनिक सारांश', lang)}</CardTitle>
           <Button size="sm" onClick={() => setShowAdd(true)}>{bi('+ Add Task', '+ कार्य जोड़ें', lang)}</Button>
         </div>
-        <p className="text-xs text-gray-500 mb-2">{completedCount}/{tasks.length} {bi('completed', 'पूर्ण', lang)}</p>
+        <p className="text-xs text-gray-400 mb-2">{completedCount}/{tasks.length} {bi('completed', 'पूर्ण', lang)}</p>
         <div className="space-y-2">
-          {tasks.length === 0 && <p className="text-xs text-gray-500">{bi('No tasks for this day.', 'इस दिन के लिए कोई कार्य नहीं।', lang)}</p>}
+          {tasks.length === 0 && <p className="text-xs text-gray-400">{bi('No tasks for this day.', 'इस दिन के लिए कोई कार्य नहीं।', lang)}</p>}
           {tasks.map((t) => (
-            <div key={t.id} className="flex items-center justify-between rounded-lg border border-gray-100 p-2">
+            <div key={t.id} className="flex items-center justify-between rounded-lg border border-white/10 p-2">
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={t.completed} onChange={() => toggleComplete(t)} />
                 <span className={t.completed ? 'line-through text-gray-400' : ''}>{t.title}</span>
@@ -90,7 +90,7 @@ export function Planner() {
           <Button variant="outline" onClick={() => setShowAdd(false)}>{bi('Cancel', 'रद्द करें', lang)}</Button>
           <Button onClick={() => newTitle && addTask(newTitle)}>{bi('Save', 'सहेजें', lang)}</Button>
         </>}>
-        <input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder={bi('Task title...', 'कार्य शीर्षक...', lang)} className="w-full rounded-lg border border-gray-300 p-2 text-sm" />
+        <input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder={bi('Task title...', 'कार्य शीर्षक...', lang)} className="w-full rounded-lg border border-white/20 p-2 text-sm" />
       </Dialog>
 
       <Dialog open={!!confirmDeleteId} onClose={() => setConfirmDeleteId(null)} title={bi('Delete task?', 'कार्य हटाएं?', lang)}
