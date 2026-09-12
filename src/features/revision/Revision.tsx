@@ -34,15 +34,15 @@ export function Revision() {
 
   return (
     <div className="space-y-3 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Revision', 'पुनरावृत्ति', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Revision', 'पुनरावृत्ति', lang)}</h1>
       <div className="flex gap-2 overflow-x-auto">
         {(['overdue', 'due_today', 'upcoming', 'completed'] as ViewTab[]).map((t) => (
-          <button key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs capitalize ${tab === t ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>
+          <button key={t} onClick={() => setTab(t)} className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs capitalize ${tab === t ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>
             {t.replace('_', ' ')}
           </button>
         ))}
       </div>
-      {list.length === 0 && <p className="text-sm text-gray-500">{bi('Nothing here right now.', 'अभी यहां कुछ नहीं है।', lang)}</p>}
+      {list.length === 0 && <p className="text-sm text-gray-400">{bi('Nothing here right now.', 'अभी यहां कुछ नहीं है।', lang)}</p>}
       {list.map((t) => (
         <Card key={t.id}><CardContent>
           <div className="flex items-center justify-between">
