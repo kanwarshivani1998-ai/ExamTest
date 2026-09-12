@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { db } from '@/db/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useSubjects } from '@/hooks/useSyllabus'
-import { QuestionSchema } from '@/lib/questionSchema'
 import { validateQuestionBatch } from '@/lib/questionSchema'
 import { createSession } from '@/hooks/useTestSession'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
@@ -15,6 +14,18 @@ import type { Question } from '@/types'
 // Optional integration point: if VITE_GEMINI_API_KEY is configured, this calls the Gemini API
 // to generate a fresh set of bilingual MCQs. Disabled by default (spec requirement #13).
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
+const GEMINI_MODEL = (import.meta.env.VITE_GEMINI_MODEL as string | undefined) || 'gemini-3.6-flash'
+
+function normalizeOptions(raw: unknown, fallback: string): [string, string, string, string] {
+  const arr = Array.isArray(raw) ? raw.map((x) => String(x ?? '').trim()).filter(Boolean) : []
+  while (arr.length < 4) arr.push(`${fallback} ${arr.length + 1}`)
+  return [arr[0], arr[1], arr[2], arr[3]]
+}
+
+function clampIndex(raw: unknown): 0 | 1 | 2 | 3 {
+  const n = Number(raw)
+  return n === 0 || n === 1 || n === 2 || n === 3 ? n : 0
+}
 
 export function AiMockTest() {
   const { lang } = useLang()
@@ -34,47 +45,92 @@ export function AiMockTest() {
     }
     setLoading(true)
     try {
-      const subjectLabel = subjects.find((s) => s.id === subjectId)?.titleEn ?? 'General'
-      const prompt = `Generate ${count} bilingual (English + Hindi) multiple-choice questions for the RVUNL Junior Assistant exam, subject: ${subjectLabel}. Return ONLY a JSON array, each item with: questionEn, questionHi, optionsEn (4), optionsHi (4), correctIndex (0-3), explanationEn, explanationHi, difficulty (easy/medium/hard). No markdown, no extra text.`
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_API_KEY, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      })
+      const resolvedSubjectId = subjectId || subjects[0]?.id || 'reasoning'
+      const subjectLabel = subjects.find((s) => s.id === resolvedSubjectId)?.titleEn ?? 'General'
+      const topics = await db.topics.where('subjectId').equals(resolvedSubjectId).toArray()
+      const topicLine = topics.length ? ` Cover a spread across these topics: ${topics.map((t) => t.titleEn).join(', ')}.` : ''
+
+      const prompt = `Generate exactly ${count} bilingual (English + Hindi) multiple-choice questions for the RVUNL Junior Assistant exam, subject: ${subjectLabel}.${topicLine}
+Return ONLY a raw JSON array (no markdown fences, no commentary) of exactly ${count} objects, each with this exact shape:
+{"questionEn": string, "questionHi": string, "optionsEn": [string,string,string,string], "optionsHi": [string,string,string,string], "correctIndex": 0-3, "explanationEn": string, "explanationHi": string, "difficulty": "easy"|"medium"|"hard"}
+Make sure correctIndex points to exactly one correct option, options are plausible and distinct, and Hindi text is natural and accurate.`
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.9, maxOutputTokens: 8192, responseMimeType: 'application/json' }
+          })
+        }
+      )
+
+      if (!res.ok) {
+        let detail = ''
+        try {
+          const errJson = await res.json()
+          detail = errJson?.error?.message ?? ''
+        } catch {
+          // ignore
+        }
+        throw new Error(`Gemini API error (${res.status}). ${detail}`.trim())
+      }
+
       const data = await res.json()
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]'
-      const cleaned = text.replace(/```json|```/g, '').trim()
-      const rawItems: any[] = JSON.parse(cleaned)
-      const items: Question[] = rawItems.map((r: any): Question => {
-        const parsed = QuestionSchema.parse({
-          id: uid('ai_q'),
-          examStage: 'both',
-          subjectId: subjectId || 'reasoning',
-          chapterId: 'ai_generated',
-          topicId: 'ai_generated',
-          questionEn: r.questionEn,
-          questionHi: r.questionHi,
-          optionsEn: r.optionsEn,
-          optionsHi: r.optionsHi,
-          correctIndex: r.correctIndex,
-          explanationEn: r.explanationEn,
-          explanationHi: r.explanationHi,
-          difficulty: r.difficulty ?? 'medium',
-          marks: 1,
-          negativePenaltyRate: 0.25,
-          sourceType: 'ai'
-        })
-        return parsed as Question
-      })
-      const { valid } = validateQuestionBatch(items)
-      await db.questions.bulkAdd(valid)
+      const text: string = data?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? '').join('') ?? ''
+      if (!text.trim()) {
+        const finishReason = data?.candidates?.[0]?.finishReason
+        throw new Error(`Gemini returned an empty response${finishReason ? ` (${finishReason})` : ''}.`)
+      }
+
+      let cleaned = text.trim().replace(/^```(json)?/i, '').replace(/```$/i, '').trim()
+      const start = cleaned.indexOf('[')
+      const end = cleaned.lastIndexOf(']')
+      if (start === -1 || end === -1 || end < start) throw new Error('Could not find a JSON array in the Gemini response.')
+      const rawItems: any[] = JSON.parse(cleaned.slice(start, end + 1))
+      if (!Array.isArray(rawItems) || rawItems.length === 0) throw new Error('Gemini did not return any questions.')
+
+      const candidates = rawItems.map((r: any) => ({
+        id: uid('ai_q'),
+        examStage: 'both' as const,
+        subjectId: resolvedSubjectId,
+        chapterId: 'ai_generated',
+        topicId: 'ai_generated',
+        questionEn: String(r?.questionEn ?? '').trim() || 'Question text unavailable.',
+        questionHi: String(r?.questionHi ?? '').trim() || 'प्रश्न उपलब्ध नहीं है।',
+        optionsEn: normalizeOptions(r?.optionsEn, 'Option'),
+        optionsHi: normalizeOptions(r?.optionsHi, 'विकल्प'),
+        correctIndex: clampIndex(r?.correctIndex),
+        explanationEn: String(r?.explanationEn ?? '').trim() || 'Explanation not available.',
+        explanationHi: String(r?.explanationHi ?? '').trim() || 'व्याख्या उपलब्ध नहीं है।',
+        difficulty: r?.difficulty === 'easy' || r?.difficulty === 'medium' || r?.difficulty === 'hard' ? r.difficulty : 'medium',
+        marks: 1,
+        negativePenaltyRate: 0.25,
+        sourceType: 'ai' as const
+      }))
+
+      const { valid, errors } = validateQuestionBatch(candidates)
+      if (valid.length === 0) {
+        throw new Error(
+          `Gemini's response could not be turned into valid questions${errors[0] ? `: ${errors[0].message}` : ''}. Please try again.`
+        )
+      }
+
+      await db.questions.bulkAdd(valid as Question[])
       const id = await createSession({
-        type: 'ai_mock', subjectId, questionIds: valid.map((q) => q.id),
-        durationSeconds: valid.length * 60, lang, negativeMarkingEnabled: true
+        type: 'ai_mock',
+        subjectId: resolvedSubjectId,
+        questionIds: valid.map((q) => q.id),
+        durationSeconds: Math.max(valid.length, 1) * 60,
+        lang,
+        negativeMarkingEnabled: true
       })
       navigate(`/mock-tests/run/${id}`)
     } catch (e) {
-      setError('AI generation failed. Please try again, or use the built-in sample question bank instead.')
+      const msg = e instanceof Error ? e.message : 'AI generation failed. Please try again, or use the built-in sample question bank instead.'
+      setError(msg)
     } finally {
       setLoading(false)
     }
