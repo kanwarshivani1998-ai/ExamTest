@@ -62,10 +62,10 @@ export function MockTestSetup() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Mock Tests', 'मॉक टेस्ट', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Mock Tests', 'मॉक टेस्ट', lang)}</h1>
 
       {activeSession && (
-        <Card className="border-amber-300 bg-amber-50">
+        <Card className="border-amber-300 bg-amber-900/30">
           <CardContent className="flex items-center justify-between">
             <p className="text-sm text-amber-800">{bi('You have an active test in progress.', 'आपका एक टेस्ट सक्रिय है।', lang)}</p>
             <Button size="sm" onClick={() => navigate(`/mock-tests/run/${activeSession.id}`)}>{bi('Resume Active Test', 'सक्रिय टेस्ट जारी रखें', lang)}</Button>
@@ -73,17 +73,17 @@ export function MockTestSetup() {
         </Card>
       )}
 
-      <p className="rounded-lg bg-gray-50 p-3 text-xs text-gray-600">{bi(DISCLAIMER.en, DISCLAIMER.hi, lang)}</p>
+      <p className="rounded-lg bg-white/10 p-3 text-xs text-gray-300">{bi(DISCLAIMER.en, DISCLAIMER.hi, lang)}</p>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {options.map((o) => (
           <Card key={o.id}>
             <CardContent>
               <CardTitle>{bi(o.titleEn, o.titleHi, lang)}</CardTitle>
-              <p className="mt-1 text-xs text-gray-500">{o.desc}</p>
+              <p className="mt-1 text-xs text-gray-400">{o.desc}</p>
               {o.id === 'subject' ? (
                 <select
-                  className="mt-2 w-full rounded-lg border border-gray-200 p-2 text-sm"
+                  className="mt-2 w-full rounded-lg border border-white/10 p-2 text-sm"
                   defaultValue=""
                   onChange={(e) => e.target.value && startSubjectMock(e.target.value)}
                 >

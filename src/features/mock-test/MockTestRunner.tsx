@@ -67,7 +67,7 @@ export function MockTestRunner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.id, session?.status, doSubmit])
 
-  if (!session) return <p className="p-4 text-sm text-gray-500">Loading session...</p>
+  if (!session) return <p className="p-4 text-sm text-gray-400">Loading session...</p>
   const current = orderedQuestions[index]
   const answer = current ? session.answers[current.id] : undefined
 
@@ -88,12 +88,12 @@ export function MockTestRunner() {
   const reviewCount = Object.values(session.answers).filter((a) => a.markedForReview).length
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-white">
-      <div className="flex items-center justify-between border-b border-gray-200 p-3 text-sm">
-        <span className="font-semibold text-brand-800">{formatSeconds(remaining)}</span>
-        <span className="text-gray-500">{current?.subjectId}</span>
+    <div className="fixed inset-0 z-40 flex flex-col bg-[#0f2140]">
+      <div className="flex items-center justify-between border-b border-white/10 p-3 text-sm">
+        <span className="font-semibold text-brand-200">{formatSeconds(remaining)}</span>
+        <span className="text-gray-400">{current?.subjectId}</span>
         <div className="flex gap-2">
-          <select className="rounded border border-gray-200 text-xs" value={lang} onChange={(e) => setLang(e.target.value as any)}>
+          <select className="rounded border border-white/10 text-xs" value={lang} onChange={(e) => setLang(e.target.value as any)}>
             <option value="en">EN</option><option value="hi">HI</option><option value="both">EN/HI</option>
           </select>
           <Button size="sm" variant="destructive" onClick={() => setShowExitConfirm(true)}>{bi('Exit', 'बाहर निकलें', lang)}</Button>
@@ -103,14 +103,14 @@ export function MockTestRunner() {
       <div className="flex-1 overflow-y-auto p-4">
         {current && (
           <div className="space-y-3">
-            <p className="text-xs text-gray-500">Q{index + 1} / {orderedQuestions.length}</p>
-            <p className="text-sm font-medium text-gray-900">{bi(current.questionEn, current.questionHi, lang)}</p>
+            <p className="text-xs text-gray-400">Q{index + 1} / {orderedQuestions.length}</p>
+            <p className="text-sm font-medium text-white">{bi(current.questionEn, current.questionHi, lang)}</p>
             <div className="space-y-2">
               {current.optionsEn.map((opt, i) => (
                 <button
                   key={i}
                   onClick={() => choose(i)}
-                  className={`w-full rounded-lg border p-3 text-left text-sm ${answer?.selectedIndex === i ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                  className={`w-full rounded-lg border p-3 text-left text-sm ${answer?.selectedIndex === i ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
                 >
                   {bi(opt, current.optionsHi[i], lang)}
                 </button>
@@ -120,13 +120,13 @@ export function MockTestRunner() {
         )}
       </div>
 
-      <div className="border-t border-gray-200 p-3">
+      <div className="border-t border-white/10 p-3">
         <div className="mb-2 flex gap-1 overflow-x-auto">
           {orderedQuestions.map((q, i) => {
             const a = session.answers[q.id]
-            let cls = 'bg-gray-200 text-gray-700'
+            let cls = 'bg-white/10 text-gray-200'
             if (a?.markedForReview) cls = 'bg-purple-500 text-white'
-            else if (a?.selectedIndex !== null && a?.selectedIndex !== undefined) cls = 'bg-emerald-500 text-white'
+            else if (a?.selectedIndex !== null && a?.selectedIndex !== undefined) cls = 'bg-emerald-900/300 text-white'
             return (
               <button key={q.id} onClick={() => setIndex(i)} className={`h-8 w-8 shrink-0 rounded text-xs ${cls} ${i === index ? 'ring-2 ring-brand-600' : ''}`}>
                 {i + 1}
