@@ -4,11 +4,11 @@ import { cn } from '@/lib/utils'
 type Tone = 'default' | 'success' | 'warning' | 'danger' | 'info'
 
 const toneClasses: Record<Tone, string> = {
-  default: 'bg-gray-100 text-gray-700',
-  success: 'bg-emerald-100 text-emerald-700',
-  warning: 'bg-amber-100 text-amber-700',
-  danger: 'bg-red-100 text-red-700',
-  info: 'bg-brand-100 text-brand-800'
+  default: 'bg-white/10 text-gray-200',
+  success: 'bg-emerald-900/40 text-emerald-300',
+  warning: 'bg-amber-900/40 text-amber-300',
+  danger: 'bg-red-900/40 text-red-300',
+  info: 'bg-brand-500/20 text-brand-300'
 }
 
 export function Badge({ className, tone = 'default', ...props }: HTMLAttributes<HTMLSpanElement> & { tone?: Tone }) {
