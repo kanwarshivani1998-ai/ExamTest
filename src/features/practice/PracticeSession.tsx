@@ -97,26 +97,26 @@ export function PracticeSession() {
   if (!started) {
     return (
       <div className="space-y-4 pb-4">
-        <h1 className="text-lg font-bold text-gray-900">{bi('Practice', 'अभ्यास', lang)}</h1>
+        <h1 className="text-lg font-bold text-white">{bi('Practice', 'अभ्यास', lang)}</h1>
         <Card>
           <CardContent className="space-y-3">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               {bi('Available questions', 'उपलब्ध प्रश्न', lang)}: {pool.length}
             </p>
             <div>
-              <label className="text-xs text-gray-600">{bi('Number of questions', 'प्रश्नों की संख्या', lang)}</label>
+              <label className="text-xs text-gray-300">{bi('Number of questions', 'प्रश्नों की संख्या', lang)}</label>
               <div className="mt-1 flex flex-wrap gap-2">
                 {[5, 10, 20, 50].map((n) => (
-                  <button key={n} onClick={() => setCount(n)} className={`rounded-lg border px-3 py-1 text-sm ${count === n ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>{n}</button>
+                  <button key={n} onClick={() => setCount(n)} className={`rounded-lg border px-3 py-1 text-sm ${count === n ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>{n}</button>
                 ))}
-                <input type="number" className="w-20 rounded-lg border border-gray-200 px-2 text-sm" value={count} onChange={(e) => setCount(parseInt(e.target.value, 10) || 1)} />
+                <input type="number" className="w-20 rounded-lg border border-white/10 px-2 text-sm" value={count} onChange={(e) => setCount(parseInt(e.target.value, 10) || 1)} />
               </div>
             </div>
             <div>
-              <label className="text-xs text-gray-600">{bi('Difficulty', 'कठिनाई', lang)}</label>
+              <label className="text-xs text-gray-300">{bi('Difficulty', 'कठिनाई', lang)}</label>
               <div className="mt-1 flex gap-2">
                 {(['all', 'easy', 'medium', 'hard'] as const).map((d) => (
-                  <button key={d} onClick={() => setDifficulty(d)} className={`rounded-lg border px-3 py-1 text-sm capitalize ${difficulty === d ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>{d}</button>
+                  <button key={d} onClick={() => setDifficulty(d)} className={`rounded-lg border px-3 py-1 text-sm capitalize ${difficulty === d ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>{d}</button>
                 ))}
               </div>
             </div>
@@ -137,7 +137,7 @@ export function PracticeSession() {
       <div className="space-y-4 pb-4">
         <Card><CardContent>
           <p className="text-lg font-semibold">{bi('Session complete!', 'सत्र पूर्ण!', lang)}</p>
-          <p className="mt-2 text-sm text-gray-600">{correctCount}/{sessionQuestions.length} {bi('correct', 'सही', lang)}</p>
+          <p className="mt-2 text-sm text-gray-300">{correctCount}/{sessionQuestions.length} {bi('correct', 'सही', lang)}</p>
           <Button className="mt-3" onClick={() => navigate('/practice')}>{bi('Back', 'वापस', lang)}</Button>
         </CardContent></Card>
       </div>
@@ -146,14 +146,14 @@ export function PracticeSession() {
 
   return (
     <div className="space-y-4 pb-4">
-      <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="flex items-center justify-between text-sm text-gray-300">
         <span>{index + 1} / {sessionQuestions.length}</span>
         <span>{bi('Score', 'स्कोर', lang)}: {correctCount}</span>
       </div>
       <Card>
         <CardContent className="space-y-3">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium text-gray-900">{bi(current.questionEn, current.questionHi, lang)}</p>
+            <p className="text-sm font-medium text-white">{bi(current.questionEn, current.questionHi, lang)}</p>
             <div className="flex shrink-0 gap-2">
               <button onClick={() => toggleQuestionBookmark(current.id, !currentStat?.bookmarked)}>
                 <Bookmark size={18} className={currentStat?.bookmarked ? 'fill-brand-600 text-brand-600' : 'text-gray-300'} />
@@ -170,10 +170,10 @@ export function PracticeSession() {
             {current.optionsEn.map((optEn, i) => {
               const isCorrectOpt = i === current.correctIndex
               const isSelected = selected === i
-              let cls = 'border-gray-200'
-              if (revealed && isCorrectOpt) cls = 'border-emerald-500 bg-emerald-50'
-              else if (revealed && isSelected && !isCorrectOpt) cls = 'border-red-500 bg-red-50'
-              else if (isSelected) cls = 'border-brand-500 bg-brand-50'
+              let cls = 'border-white/10'
+              if (revealed && isCorrectOpt) cls = 'border-emerald-500 bg-emerald-900/30'
+              else if (revealed && isSelected && !isCorrectOpt) cls = 'border-red-500 bg-red-900/30'
+              else if (isSelected) cls = 'border-brand-500 bg-brand-500/20'
               return (
                 <button key={i} onClick={() => selectOption(i)} className={`w-full rounded-lg border p-3 text-left text-sm ${cls}`}>
                   {bi(optEn, current.optionsHi[i], lang)}
@@ -183,7 +183,7 @@ export function PracticeSession() {
           </div>
 
           {revealed && (
-            <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-700">
+            <div className="rounded-lg bg-white/10 p-3 text-xs text-gray-200">
               <p className="font-semibold">{bi('Explanation', 'व्याख्या', lang)}</p>
               <p>{bi(current.explanationEn, current.explanationHi, lang)}</p>
             </div>
@@ -191,14 +191,14 @@ export function PracticeSession() {
 
           <textarea
             placeholder={bi('Add a note...', 'नोट जोड़ें...', lang)}
-            className="w-full rounded-lg border border-gray-200 p-2 text-xs"
+            className="w-full rounded-lg border border-white/10 p-2 text-xs"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             onBlur={() => note && setQuestionNote(current.id, note)}
           />
 
           <div className="flex items-center justify-between">
-            <button className="flex items-center gap-1 text-xs text-gray-500"><Flag size={14} /> {bi('Report question', 'प्रश्न रिपोर्ट करें', lang)}</button>
+            <button className="flex items-center gap-1 text-xs text-gray-400"><Flag size={14} /> {bi('Report question', 'प्रश्न रिपोर्ट करें', lang)}</button>
             <div className="flex gap-2">
               {!revealed && <Button variant="outline" size="sm" onClick={() => setRevealed(true)}>{bi('Show Answer', 'उत्तर दिखाएं', lang)}</Button>}
               <Button size="sm" onClick={nextQuestion}>
