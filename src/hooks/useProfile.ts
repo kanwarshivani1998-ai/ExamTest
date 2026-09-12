@@ -17,7 +17,10 @@ export const DEFAULT_PROFILE: UserProfile = {
 }
 
 export function useProfile() {
-  const profile = useLiveQuery(() => db.userProfile.get('local-user'), [])
+  const profile = useLiveQuery(async () => {
+    const existing = await db.userProfile.get('local-user')
+    return existing ?? DEFAULT_PROFILE
+  }, [])
   return profile
 }
 
