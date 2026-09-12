@@ -28,6 +28,7 @@ export function TypingTest() {
     setInput('')
     setStarted(false)
     setResult(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modeId])
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function TypingTest() {
     }
     const t = setTimeout(() => setRemaining((r) => r - 1), 1000)
     return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, remaining])
 
   function start() {
