@@ -40,7 +40,7 @@ export function Backup() {
       const text = await file.text()
       const payload = JSON.parse(text)
       const d = payload.data ?? payload
-      await db.transaction('rw', db.subjects, db.chapters, db.topics, db.questions, db.questionStats, db.testSessions, db.testResults, db.plannerTasks, db.typingResults, db.userProfile, async () => {
+      await db.transaction('rw', db.tables, async () => {
         if (d.subjects) { await db.subjects.clear(); await db.subjects.bulkPut(d.subjects) }
         if (d.chapters) { await db.chapters.clear(); await db.chapters.bulkPut(d.chapters) }
         if (d.topics) { await db.topics.clear(); await db.topics.bulkPut(d.topics) }
