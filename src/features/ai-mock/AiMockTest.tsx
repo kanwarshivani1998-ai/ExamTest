@@ -44,20 +44,28 @@ export function AiMockTest() {
       const data = await res.json()
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '[]'
       const cleaned = text.replace(/```json|```/g, '').trim()
-      const rawItems = JSON.parse(cleaned)
-      const items: Question[] = rawItems.map((r: any) => QuestionSchema.parse({
-        id: uid('ai_q'),
-        examStage: 'both',
-        subjectId: subjectId || 'reasoning',
-        chapterId: 'ai_generated',
-        topicId: 'ai_generated',
-        questionEn: r.questionEn, questionHi: r.questionHi,
-        optionsEn: r.optionsEn, optionsHi: r.optionsHi,
-        correctIndex: r.correctIndex,
-        explanationEn: r.explanationEn, explanationHi: r.explanationHi,
-        difficulty: r.difficulty ?? 'medium',
-        marks: 1, negativePenaltyRate: 0.25, sourceType: 'ai'
-      })) as Question[]
+      const rawItems: any[] = JSON.parse(cleaned)
+      const items: Question[] = rawItems.map((r: any): Question => {
+        const parsed = QuestionSchema.parse({
+          id: uid('ai_q'),
+          examStage: 'both',
+          subjectId: subjectId || 'reasoning',
+          chapterId: 'ai_generated',
+          topicId: 'ai_generated',
+          questionEn: r.questionEn,
+          questionHi: r.questionHi,
+          optionsEn: r.optionsEn,
+          optionsHi: r.optionsHi,
+          correctIndex: r.correctIndex,
+          explanationEn: r.explanationEn,
+          explanationHi: r.explanationHi,
+          difficulty: r.difficulty ?? 'medium',
+          marks: 1,
+          negativePenaltyRate: 0.25,
+          sourceType: 'ai'
+        })
+        return parsed as Question
+      })
       const { valid } = validateQuestionBatch(items)
       await db.questions.bulkAdd(valid)
       const id = await createSession({
