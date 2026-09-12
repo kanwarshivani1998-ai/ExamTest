@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAllQuestions, pickQuestions } from '@/hooks/useQuestions'
 import { useSubjects } from '@/hooks/useSyllabus'
 import { useQuestionStats } from '@/hooks/useQuestions'
 import { createSession, useActiveSession } from '@/hooks/useTestSession'
 import { PRE_EXAM_CONFIG, MAIN_EXAM_CONFIG, DISCLAIMER } from '@/lib/examConfig'
+import { selectQuestionsByBlueprint } from '@/lib/questionSelection'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { bi, useLang } from '@/lib/i18n'
@@ -20,6 +22,7 @@ export function MockTestSetup() {
   const subjects = useSubjects()
   const stats = useQuestionStats()
   const activeSession = useActiveSession()
+  const [blueprintError, setBlueprintError] = useState<{ en: string; hi: string } | null>(null)
 
   const options = [
     { id: 'pre', titleEn: 'Pre-Examination Mock', titleHi: 'प्री-परीक्षा मॉक', desc: `${PRE_EXAM_CONFIG.totalQuestions}Q · ${PRE_EXAM_CONFIG.durationMinutes}min` },
@@ -30,17 +33,27 @@ export function MockTestSetup() {
   ]
 
   async function startPreMock() {
-    const qs = pickQuestions(allQuestions, PRE_EXAM_CONFIG.totalQuestions)
+    setBlueprintError(null)
+    const result = selectQuestionsByBlueprint(allQuestions, PRE_EXAM_CONFIG)
+    if (!result.ok) {
+      setBlueprintError({ en: result.errorEn ?? '', hi: result.errorHi ?? '' })
+      return
+    }
     const id = await createSession({
-      type: 'pre_mock', questionIds: qs.map((q) => q.id),
+      type: 'pre_mock', questionIds: result.questions.map((q) => q.id),
       durationSeconds: PRE_EXAM_CONFIG.durationMinutes * 60, lang, negativeMarkingEnabled: PRE_EXAM_CONFIG.negativeMarkingEnabled
     })
     navigate(`/mock-tests/run/${id}`)
   }
   async function startMainMock() {
-    const qs = pickQuestions(allQuestions, MAIN_EXAM_CONFIG.totalQuestions)
+    setBlueprintError(null)
+    const result = selectQuestionsByBlueprint(allQuestions, MAIN_EXAM_CONFIG)
+    if (!result.ok) {
+      setBlueprintError({ en: result.errorEn ?? '', hi: result.errorHi ?? '' })
+      return
+    }
     const id = await createSession({
-      type: 'main_mock', questionIds: qs.map((q) => q.id),
+      type: 'main_mock', questionIds: result.questions.map((q) => q.id),
       durationSeconds: MAIN_EXAM_CONFIG.durationMinutes * 60, lang, negativeMarkingEnabled: MAIN_EXAM_CONFIG.negativeMarkingEnabled
     })
     navigate(`/mock-tests/run/${id}`)
@@ -79,6 +92,14 @@ export function MockTestSetup() {
       )}
 
       <p className="rounded-lg bg-white/10 p-3 text-xs text-gray-300">{bi(DISCLAIMER.en, DISCLAIMER.hi, lang)}</p>
+
+      {blueprintError && (
+        <Card className="border-danger/40 bg-danger/10">
+          <CardContent>
+            <p className="text-sm font-medium text-danger-text">{bi(blueprintError.en, blueprintError.hi, lang)}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {options.map((o) => {
