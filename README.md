@@ -14,6 +14,15 @@ This project was generated in an offline sandbox with **no internet access and n
 - **No `.apk` file is included.** The GitHub Actions workflow in `.github/workflows/android-debug-apk.yml` will build one automatically once you push this repo to GitHub.
 - The built-in question bank has **153 unique bilingual sample questions** (not the full ~420 stretch target), covering all 6 main-exam subjects. This exceeds the spec's stated minimum fallback of 140. All are clearly labelled **"Sample Question / अभ्यास प्रश्न"** — none are official previous-year questions.
 
+## Mobile UI redesign (latest pass)
+
+Navigation, header, safe-area handling, theme tokens, and the Home/Practice/
+Mock Test screens went through a mobile UI/UX pass. See
+[`FIX-REPORT.md`](./FIX-REPORT.md) for exactly what changed and why, and
+[`UI-VALIDATION-REPORT.md`](./UI-VALIDATION-REPORT.md) for a checklist-style
+review (screenshots could not be captured in the sandbox this was built in —
+verify visually with `npm run dev` once you have it running locally).
+
 ## Getting started locally
 
 ```bash
