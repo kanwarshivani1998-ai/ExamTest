@@ -71,17 +71,17 @@ export function TypingTest() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('Typing Practice', 'टाइपिंग अभ्यास', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('Typing Practice', 'टाइपिंग अभ्यास', lang)}</h1>
       <div className="flex flex-wrap gap-2">
         {TYPING_MODES.map((m) => (
-          <button key={m.id} onClick={() => setModeId(m.id)} className={`rounded-lg border px-3 py-1.5 text-xs ${modeId === m.id ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>
+          <button key={m.id} onClick={() => setModeId(m.id)} className={`rounded-lg border px-3 py-1.5 text-xs ${modeId === m.id ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>
             {bi(m.labelEn, m.labelHi, lang)}
           </button>
         ))}
       </div>
       <Card><CardContent className="space-y-3">
-        <p className="text-xs text-gray-500">{modeConfig.durationMinutes} {bi('min', 'मिनट', lang)} · {modeConfig.marks} {bi('marks', 'अंक', lang)}</p>
-        <div className="rounded-lg bg-gray-50 p-3 text-sm leading-relaxed text-gray-700" dir={modeConfig.lang === 'hi' ? 'ltr' : 'ltr'}>
+        <p className="text-xs text-gray-400">{modeConfig.durationMinutes} {bi('min', 'मिनट', lang)} · {modeConfig.marks} {bi('marks', 'अंक', lang)}</p>
+        <div className="rounded-lg bg-white/10 p-3 text-sm leading-relaxed text-gray-200" dir={modeConfig.lang === 'hi' ? 'ltr' : 'ltr'}>
           {passage.text}
         </div>
         <textarea
@@ -91,10 +91,10 @@ export function TypingTest() {
           onChange={(e) => setInput(e.target.value)}
           rows={6}
           placeholder={started ? '' : bi('Click Start to begin typing...', 'टाइप करना शुरू करने हेतु Start दबाएं...', lang)}
-          className="w-full rounded-lg border border-gray-200 p-3 text-sm"
+          className="w-full rounded-lg border border-white/10 p-3 text-sm"
         />
         <div className="flex items-center justify-between">
-          <span className="font-mono text-sm text-brand-700">{formatSeconds(remaining)}</span>
+          <span className="font-mono text-sm text-brand-300">{formatSeconds(remaining)}</span>
           {!started ? (
             <Button onClick={start}>{bi('Start', 'शुरू करें', lang)}</Button>
           ) : (
@@ -102,7 +102,7 @@ export function TypingTest() {
           )}
         </div>
         {result && (
-          <div className="grid grid-cols-2 gap-2 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 rounded-lg bg-emerald-900/30 p-3 text-xs text-emerald-800 sm:grid-cols-4">
             <span>{bi('Gross WPM', 'सकल WPM', lang)}: {result.grossWpm}</span>
             <span>{bi('Net WPM', 'शुद्ध WPM', lang)}: {result.netWpm}</span>
             <span>{bi('Accuracy', 'शुद्धता', lang)}: {result.accuracyPercent}%</span>
@@ -113,7 +113,7 @@ export function TypingTest() {
 
       <Card><CardContent>
         <CardTitle>{bi('Recent typing results', 'हालिया टाइपिंग परिणाम', lang)}</CardTitle>
-        <div className="mt-2 space-y-1 text-xs text-gray-600">
+        <div className="mt-2 space-y-1 text-xs text-gray-300">
           {history.length === 0 && <p>{bi('No typing tests yet.', 'अभी तक कोई टाइपिंग टेस्ट नहीं।', lang)}</p>}
           {history.map((h) => (
             <div key={h.id} className="flex justify-between">
