@@ -6,13 +6,15 @@ import { useSession, updateAnswer, tickRemaining, submitSession } from '@/hooks/
 import { scoreTest } from '@/lib/scoring'
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
+import { QuestionOption } from '@/components/ui/QuestionOption'
 import { bi, useLang } from '@/lib/i18n'
-import { formatSeconds } from '@/lib/utils'
+import { formatSeconds, cn } from '@/lib/utils'
+import { X, Grid3x3 } from 'lucide-react'
 import type { Question } from '@/types'
 
 export function MockTestRunner() {
   const { sessionId } = useParams()
-  const { lang, setLang } = useLang()
+  const { lang } = useLang()
   const navigate = useNavigate()
   const session = useSession(sessionId)
   const liveQuestions = useLiveQuery(
@@ -25,6 +27,7 @@ export function MockTestRunner() {
   const [remaining, setRemaining] = useState<number>(session?.remainingSeconds ?? 0)
   const [showExitConfirm, setShowExitConfirm] = useState(false)
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false)
+  const [showPalette, setShowPalette] = useState(false)
 
   useEffect(() => {
     if (session) setRemaining(session.remainingSeconds)
@@ -86,72 +89,119 @@ export function MockTestRunner() {
 
   const answeredCount = Object.values(session.answers).filter((a) => a.selectedIndex !== null).length
   const reviewCount = Object.values(session.answers).filter((a) => a.markedForReview).length
+  const unansweredCount = orderedQuestions.length - answeredCount
+
+  const timerTone =
+    remaining < 60 ? 'text-danger animate-pulse' :
+    remaining < 5 * 60 ? 'text-danger' :
+    remaining < 10 * 60 ? 'text-warning' : 'text-white'
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-[#0f2140]">
-      <div className="flex items-center justify-between border-b border-white/10 p-3 text-sm">
-        <span className="font-semibold text-brand-200">{formatSeconds(remaining)}</span>
-        <span className="text-gray-400">{current?.subjectId}</span>
-        <div className="flex gap-2">
-          <select className="rounded border border-white/10 text-xs" value={lang} onChange={(e) => setLang(e.target.value as any)}>
-            <option value="en">EN</option><option value="hi">HI</option><option value="both">EN/HI</option>
-          </select>
-          <Button size="sm" variant="destructive" onClick={() => setShowExitConfirm(true)}>{bi('Exit', 'बाहर निकलें', lang)}</Button>
-        </div>
+      <div
+        className="flex items-center justify-between border-b border-white/10 px-3 py-2.5"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 10px)' }}
+      >
+        <button
+          onClick={() => setShowExitConfirm(true)}
+          aria-label={bi('Exit', 'बाहर निकलें', lang)}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-gray-300 active:bg-white/10"
+        >
+          <X size={20} />
+        </button>
+        <span className="truncate px-2 text-xs font-medium text-gray-300">
+          {bi('Question', 'प्रश्न', lang)} {index + 1}/{orderedQuestions.length}
+        </span>
+        <span className={cn('shrink-0 text-sm font-bold tabular-nums', timerTone)}>{formatSeconds(remaining)}</span>
+      </div>
+
+      <div className="h-1 w-full bg-white/10">
+        <div className="h-1 bg-brand-500 transition-all" style={{ width: `${((index + 1) / orderedQuestions.length) * 100}%` }} />
+      </div>
+      <div className="flex justify-center gap-4 border-b border-white/10 py-1.5 text-[11px] text-gray-400">
+        <span>{bi('Answered', 'उत्तरित', lang)}: {answeredCount}</span>
+        <span>{bi('Unanswered', 'अनुत्तरित', lang)}: {unansweredCount}</span>
+        <span>{bi('Marked', 'चिह्नित', lang)}: {reviewCount}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
         {current && (
           <div className="space-y-3">
-            <p className="text-xs text-gray-400">Q{index + 1} / {orderedQuestions.length}</p>
-            <p className="text-sm font-medium text-white">{bi(current.questionEn, current.questionHi, lang)}</p>
+            <p className="text-sm font-medium leading-relaxed text-white">{bi(current.questionEn, current.questionHi, lang)}</p>
             <div className="space-y-2">
               {current.optionsEn.map((opt, i) => (
-                <button
+                <QuestionOption
                   key={i}
+                  index={i}
+                  label={bi(opt, current.optionsHi[i], lang)}
+                  state={answer?.selectedIndex === i ? 'selected' : 'default'}
                   onClick={() => choose(i)}
-                  className={`w-full rounded-lg border p-3 text-left text-sm ${answer?.selectedIndex === i ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
-                >
-                  {bi(opt, current.optionsHi[i], lang)}
-                </button>
+                />
               ))}
             </div>
           </div>
         )}
       </div>
 
-      <div className="border-t border-white/10 p-3">
-        <div className="mb-2 flex gap-1 overflow-x-auto">
-          {orderedQuestions.map((q, i) => {
-            const a = session.answers[q.id]
-            let cls = 'bg-white/10 text-gray-200'
-            if (a?.markedForReview) cls = 'bg-purple-500 text-white'
-            else if (a?.selectedIndex !== null && a?.selectedIndex !== undefined) cls = 'bg-emerald-900/300 text-white'
-            return (
-              <button key={q.id} onClick={() => setIndex(i)} className={`h-8 w-8 shrink-0 rounded text-xs ${cls} ${i === index ? 'ring-2 ring-brand-600' : ''}`}>
-                {i + 1}
-              </button>
-            )
-          })}
+      <div className="border-t border-white/10 bg-[#0f2140] p-3 sticky-bar-safe-bottom">
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" disabled={index === 0} onClick={() => setIndex((i) => i - 1)}>{bi('Previous', 'पिछला', lang)}</Button>
+          {index < orderedQuestions.length - 1 ? (
+            <Button onClick={() => setIndex((i) => i + 1)}>{bi('Save & Next', 'सहेजें और अगला', lang)}</Button>
+          ) : (
+            <Button onClick={() => setShowSubmitConfirm(true)}>{bi('Submit Test', 'टेस्ट जमा करें', lang)}</Button>
+          )}
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" disabled={index === 0} onClick={() => setIndex((i) => i - 1)}>{bi('Previous', 'पिछला', lang)}</Button>
-            <Button size="sm" variant="outline" onClick={clearResponse}>{bi('Clear Response', 'उत्तर साफ़ करें', lang)}</Button>
-            <Button size="sm" variant="secondary" onClick={toggleReview}>{bi('Mark for Review', 'समीक्षा हेतु चिह्नित करें', lang)}</Button>
-          </div>
-          <div className="flex gap-2">
-            {index < orderedQuestions.length - 1 ? (
-              <Button size="sm" onClick={() => setIndex((i) => i + 1)}>{bi('Save and Next', 'सहेजें और अगला', lang)}</Button>
-            ) : (
-              <Button size="sm" onClick={() => setShowSubmitConfirm(true)}>{bi('Submit', 'जमा करें', lang)}</Button>
-            )}
-          </div>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          <Button variant="secondary" size="sm" onClick={toggleReview}>{bi('Mark for Review', 'समीक्षा हेतु', lang)}</Button>
+          <Button variant="secondary" size="sm" onClick={clearResponse}>{bi('Clear', 'साफ़ करें', lang)}</Button>
+          <Button variant="secondary" size="sm" onClick={() => setShowPalette(true)}>
+            <Grid3x3 size={15} /> {bi('Palette', 'पैलेट', lang)}
+          </Button>
         </div>
-        <p className="mt-1 text-center text-[11px] text-gray-400">
-          {bi('Answered', 'उत्तरित', lang)}: {answeredCount} · {bi('For review', 'समीक्षा हेतु', lang)}: {reviewCount}
-        </p>
       </div>
+
+      {showPalette && (
+        <div
+          className="fixed inset-0 z-50 flex items-end bg-black/50"
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowPalette(false) }}
+        >
+          <div className="max-h-[70vh] w-full rounded-t-2xl border-t border-white/10 bg-[#12233f] p-4" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)' }}>
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm font-semibold text-white">{bi('Question Palette', 'प्रश्न पैलेट', lang)}</p>
+              <button onClick={() => setShowPalette(false)} aria-label={bi('Close', 'बंद करें', lang)} className="flex h-8 w-8 items-center justify-center rounded-full active:bg-white/10">
+                <X size={18} className="text-gray-300" />
+              </button>
+            </div>
+            <div className="mb-3 flex flex-wrap gap-3 text-[11px] text-gray-300">
+              <LegendDot color="bg-success" label={bi('Answered', 'उत्तरित', lang)} />
+              <LegendDot color="bg-white/15" label={bi('Not answered', 'अनुत्तरित', lang)} />
+              <LegendDot color="bg-brand-500" label={bi('Current', 'वर्तमान', lang)} />
+              <LegendDot color="bg-ai" label={bi('Marked', 'चिह्नित', lang)} />
+            </div>
+            <div className="grid grid-cols-6 gap-2 overflow-y-auto pb-2">
+              {orderedQuestions.map((q, i) => {
+                const a = session.answers[q.id]
+                const answeredQ = a?.selectedIndex !== null && a?.selectedIndex !== undefined
+                let cls = 'bg-white/10 text-gray-200'
+                if (a?.markedForReview) cls = answeredQ ? 'bg-ai text-white ring-2 ring-success' : 'bg-ai text-white'
+                else if (answeredQ) cls = 'bg-success text-white'
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => { setIndex(i); setShowPalette(false) }}
+                    className={cn('flex h-10 w-10 items-center justify-center rounded-lg text-xs font-medium', cls, i === index && 'ring-2 ring-white')}
+                  >
+                    {i + 1}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Dialog open={showExitConfirm} onClose={() => setShowExitConfirm(false)} title={bi('Exit test?', 'टेस्ट से बाहर निकलें?', lang)}
         footer={<>
@@ -166,9 +216,18 @@ export function MockTestRunner() {
           <Button variant="outline" onClick={() => setShowSubmitConfirm(false)}>{bi('Cancel', 'रद्द करें', lang)}</Button>
           <Button onClick={doSubmit}>{bi('Confirm Submit', 'पुष्टि करें एवं जमा करें', lang)}</Button>
         </>}>
-        {bi(`Answered ${answeredCount} of ${orderedQuestions.length} questions. This cannot be undone.`,
-          `${orderedQuestions.length} में से ${answeredCount} प्रश्नों के उत्तर दिए गए। यह पूर्ववत नहीं किया जा सकता।`, lang)}
+        {bi(`Answered ${answeredCount} of ${orderedQuestions.length}. Unanswered: ${unansweredCount}, marked for review: ${reviewCount}. Remaining time: ${formatSeconds(remaining)}. This cannot be undone.`,
+          `${orderedQuestions.length} में से ${answeredCount} प्रश्नों के उत्तर दिए गए। अनुत्तरित: ${unansweredCount}, समीक्षा हेतु चिह्नित: ${reviewCount}। शेष समय: ${formatSeconds(remaining)}। यह पूर्ववत नहीं किया जा सकता।`, lang)}
       </Dialog>
     </div>
+  )
+}
+
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className={cn('h-2.5 w-2.5 rounded-full', color)} />
+      {label}
+    </span>
   )
 }

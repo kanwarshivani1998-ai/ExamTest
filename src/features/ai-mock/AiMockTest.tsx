@@ -99,8 +99,8 @@ export function AiMockTest() {
             <button key={n} onClick={() => setCount(n)} className={`rounded-lg border px-3 py-1 text-sm ${count === n ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>{n}</button>
           ))}
         </div>
-        <Button disabled={loading} onClick={generate}>{loading ? bi('Generating...', 'बनाया जा रहा है...', lang) : bi('Generate AI Mock', 'एआई मॉक बनाएं', lang)}</Button>
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        <Button disabled={loading || !GEMINI_API_KEY} onClick={generate}>{loading ? bi('Generating...', 'बनाया जा रहा है...', lang) : bi('Generate AI Mock', 'एआई मॉक बनाएं', lang)}</Button>
+        {error && <p className="text-xs text-danger-text">{error}</p>}
         {!GEMINI_API_KEY && (
           <p className="text-xs text-gray-400">
             {bi('Setup needed: add VITE_GEMINI_API_KEY to your .env file to enable AI generation.', 'सेटअप आवश्यक: एआई जनरेशन सक्षम करने हेतु अपनी .env फ़ाइल में VITE_GEMINI_API_KEY जोड़ें।', lang)}

@@ -82,7 +82,7 @@ export function Backup() {
       </CardContent></Card>
 
       <Card><CardContent className="space-y-3">
-        <CardTitle className="text-red-600">{bi('Reset All Data', 'सभी डेटा रीसेट करें', lang)}</CardTitle>
+        <CardTitle className="text-danger-text">{bi('Reset All Data', 'सभी डेटा रीसेट करें', lang)}</CardTitle>
         <p className="text-xs text-gray-400">{bi('Permanently deletes all your offline data on this device.', 'इस डिवाइस पर आपका सारा ऑफलाइन डेटा स्थायी रूप से हटा देता है।', lang)}</p>
         <Button variant="destructive" onClick={() => setConfirmReset(true)}>{bi('Reset All Data', 'सभी डेटा रीसेट करें', lang)}</Button>
       </CardContent></Card>

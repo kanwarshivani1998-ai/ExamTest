@@ -7,6 +7,11 @@ import { PRE_EXAM_CONFIG, MAIN_EXAM_CONFIG, DISCLAIMER } from '@/lib/examConfig'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { bi, useLang } from '@/lib/i18n'
+import { FileCheck2, FileText, BookOpen, Settings2, Star, type LucideIcon } from 'lucide-react'
+
+const ICONS: Record<string, LucideIcon> = {
+  pre: FileCheck2, main: FileText, subject: BookOpen, custom: Settings2, important: Star
+}
 
 export function MockTestSetup() {
   const { lang } = useLang()
@@ -65,10 +70,10 @@ export function MockTestSetup() {
       <h1 className="text-lg font-bold text-white">{bi('Mock Tests', 'मॉक टेस्ट', lang)}</h1>
 
       {activeSession && (
-        <Card className="border-amber-300 bg-amber-900/30">
-          <CardContent className="flex items-center justify-between">
-            <p className="text-sm text-amber-800">{bi('You have an active test in progress.', 'आपका एक टेस्ट सक्रिय है।', lang)}</p>
-            <Button size="sm" onClick={() => navigate(`/mock-tests/run/${activeSession.id}`)}>{bi('Resume Active Test', 'सक्रिय टेस्ट जारी रखें', lang)}</Button>
+        <Card className="border-warning/40 bg-warning/10">
+          <CardContent className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-medium text-warning-text">{bi('You have an active test in progress.', 'आपका एक टेस्ट सक्रिय है।', lang)}</p>
+            <Button size="sm" onClick={() => navigate(`/mock-tests/run/${activeSession.id}`)}>{bi('Resume Test', 'टेस्ट जारी रखें', lang)}</Button>
           </CardContent>
         </Card>
       )}
@@ -76,10 +81,17 @@ export function MockTestSetup() {
       <p className="rounded-lg bg-white/10 p-3 text-xs text-gray-300">{bi(DISCLAIMER.en, DISCLAIMER.hi, lang)}</p>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {options.map((o) => (
+        {options.map((o) => {
+          const Icon = ICONS[o.id] ?? FileText
+          return (
           <Card key={o.id}>
             <CardContent>
-              <CardTitle>{bi(o.titleEn, o.titleHi, lang)}</CardTitle>
+              <div className="mb-1 flex items-center gap-2.5">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${o.id === 'important' ? 'bg-warning/20 text-warning-text' : 'bg-brand-500/20 text-brand-300'}`}>
+                  <Icon size={18} />
+                </span>
+                <CardTitle className="text-sm">{bi(o.titleEn, o.titleHi, lang)}</CardTitle>
+              </div>
               <p className="mt-1 text-xs text-gray-400">{o.desc}</p>
               {o.id === 'subject' ? (
                 <select
@@ -106,7 +118,8 @@ export function MockTestSetup() {
               )}
             </CardContent>
           </Card>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

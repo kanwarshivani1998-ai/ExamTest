@@ -9,6 +9,22 @@ body {
   background: linear-gradient(180deg, #123a63 0%, #0f2140 60%, #0f2140 100%);
   background-attachment: fixed;
   color: #fff;
+  font-family: Inter, 'Noto Sans Devanagari', system-ui, sans-serif;
+}
+
+/* Safe-area aware page content padding: bottom-nav height + gesture inset + gap */
+.page-safe-bottom {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom) + 16px);
+}
+.header-safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.sticky-bar-safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
 input, select, textarea {
