@@ -82,27 +82,27 @@ export function AiMockTest() {
 
   return (
     <div className="space-y-4 pb-4">
-      <h1 className="text-lg font-bold text-gray-900">{bi('AI Mock Test', 'एआई मॉक टेस्ट', lang)}</h1>
+      <h1 className="text-lg font-bold text-white">{bi('AI Mock Test', 'एआई मॉक टेस्ट', lang)}</h1>
       <Card><CardContent className="space-y-3">
-        <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-2">
+        <p className="text-xs text-amber-200 bg-amber-900/30 rounded-lg p-2">
           {bi(
             'All AI-generated questions are labelled AI-generated — unverified, and are NOT official previous-year questions.',
             'सभी एआई-जनित प्रश्न "एआई-जनित — असत्यापित" के रूप में चिह्नित हैं, और आधिकारिक पिछले वर्ष के प्रश्न नहीं हैं।', lang
           )}
         </p>
-        <select className="w-full rounded-lg border border-gray-200 p-2 text-sm" value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
+        <select className="w-full rounded-lg border border-white/10 p-2 text-sm" value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
           <option value="">{bi('Choose subject', 'विषय चुनें', lang)}</option>
           {subjects.map((s) => <option key={s.id} value={s.id}>{bi(s.titleEn, s.titleHi, lang)}</option>)}
         </select>
         <div className="flex gap-2">
           {[5, 10, 20].map((n) => (
-            <button key={n} onClick={() => setCount(n)} className={`rounded-lg border px-3 py-1 text-sm ${count === n ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}>{n}</button>
+            <button key={n} onClick={() => setCount(n)} className={`rounded-lg border px-3 py-1 text-sm ${count === n ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}>{n}</button>
           ))}
         </div>
         <Button disabled={loading} onClick={generate}>{loading ? bi('Generating...', 'बनाया जा रहा है...', lang) : bi('Generate AI Mock', 'एआई मॉक बनाएं', lang)}</Button>
         {error && <p className="text-xs text-red-600">{error}</p>}
         {!GEMINI_API_KEY && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-400">
             {bi('Setup needed: add VITE_GEMINI_API_KEY to your .env file to enable AI generation.', 'सेटअप आवश्यक: एआई जनरेशन सक्षम करने हेतु अपनी .env फ़ाइल में VITE_GEMINI_API_KEY जोड़ें।', lang)}
           </p>
         )}
@@ -110,7 +110,7 @@ export function AiMockTest() {
 
       <Card><CardContent>
         <CardTitle>{bi('AI Test History', 'एआई टेस्ट इतिहास', lang)}</CardTitle>
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-2 text-xs text-gray-400">
           {aiHistory.length} {bi('AI-generated questions saved so far.', 'अब तक सहेजे गए एआई-जनित प्रश्न।', lang)}
         </p>
       </CardContent></Card>
