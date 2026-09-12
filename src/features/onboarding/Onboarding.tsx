@@ -41,13 +41,13 @@ export function Onboarding() {
 
       {step === 'lang' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Choose your language / अपनी भाषा चुनें</h1>
+          <h1 className="text-xl font-bold text-white">Choose your language / अपनी भाषा चुनें</h1>
           <div className="grid grid-cols-1 gap-3">
             {(['en', 'hi', 'both'] as LangMode[]).map((l) => (
               <button
                 key={l}
                 onClick={() => setData((d) => ({ ...d, lang: l }))}
-                className={`rounded-xl border p-4 text-left ${data.lang === l ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                className={`rounded-xl border p-4 text-left ${data.lang === l ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
               >
                 {l === 'en' ? 'English' : l === 'hi' ? 'हिंदी' : 'English + हिंदी'}
               </button>
@@ -58,7 +58,7 @@ export function Onboarding() {
 
       {step === 'target' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Select your target post / लक्ष्य पद चुनें</h1>
+          <h1 className="text-xl font-bold text-white">Select your target post / लक्ष्य पद चुनें</h1>
           <div className="grid grid-cols-1 gap-3">
             {([
               ['junior_assistant', 'Junior Assistant'],
@@ -68,7 +68,7 @@ export function Onboarding() {
               <button
                 key={val}
                 onClick={() => setData((d) => ({ ...d, targetPost: val }))}
-                className={`rounded-xl border p-4 text-left ${data.targetPost === val ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                className={`rounded-xl border p-4 text-left ${data.targetPost === val ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
               >
                 {label}
               </button>
@@ -79,7 +79,7 @@ export function Onboarding() {
 
       {step === 'stage' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Preparation stage / तैयारी की स्थिति</h1>
+          <h1 className="text-xl font-bold text-white">Preparation stage / तैयारी की स्थिति</h1>
           <div className="grid grid-cols-1 gap-3">
             {([
               ['starting', 'Starting preparation / तैयारी शुरू कर रहे हैं'],
@@ -89,7 +89,7 @@ export function Onboarding() {
               <button
                 key={val}
                 onClick={() => setData((d) => ({ ...d, stage: val }))}
-                className={`rounded-xl border p-4 text-left ${data.stage === val ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                className={`rounded-xl border p-4 text-left ${data.stage === val ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
               >
                 {label}
               </button>
@@ -100,7 +100,7 @@ export function Onboarding() {
 
       {step === 'focus' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Current target exam / वर्तमान लक्ष्य परीक्षा</h1>
+          <h1 className="text-xl font-bold text-white">Current target exam / वर्तमान लक्ष्य परीक्षा</h1>
           <div className="grid grid-cols-1 gap-3">
             {([
               ['pre', 'Pre-Examination'],
@@ -111,7 +111,7 @@ export function Onboarding() {
               <button
                 key={val}
                 onClick={() => setData((d) => ({ ...d, focus: val }))}
-                className={`rounded-xl border p-4 text-left ${data.focus === val ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                className={`rounded-xl border p-4 text-left ${data.focus === val ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
               >
                 {label}
               </button>
@@ -122,10 +122,10 @@ export function Onboarding() {
 
       {step === 'examDate' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Exam date (optional) / परीक्षा तिथि (वैकल्पिक)</h1>
+          <h1 className="text-xl font-bold text-white">Exam date (optional) / परीक्षा तिथि (वैकल्पिक)</h1>
           <input
             type="date"
-            className="w-full rounded-xl border border-gray-300 p-3"
+            className="w-full rounded-xl border border-white/20 p-3"
             value={data.examDate ?? ''}
             onChange={(e) => setData((d) => ({ ...d, examDate: e.target.value || null }))}
           />
@@ -134,13 +134,13 @@ export function Onboarding() {
 
       {step === 'dailyTarget' && (
         <div className="space-y-4">
-          <h1 className="text-xl font-bold text-gray-900">Daily study target / दैनिक अध्ययन लक्ष्य</h1>
+          <h1 className="text-xl font-bold text-white">Daily study target / दैनिक अध्ययन लक्ष्य</h1>
           <div className="grid grid-cols-2 gap-3">
             {[30, 60, 120, 180].map((m) => (
               <button
                 key={m}
                 onClick={() => setData((d) => ({ ...d, dailyStudyTargetMinutes: m }))}
-                className={`rounded-xl border p-4 ${data.dailyStudyTargetMinutes === m ? 'border-brand-600 bg-brand-50' : 'border-gray-200'}`}
+                className={`rounded-xl border p-4 ${data.dailyStudyTargetMinutes === m ? 'border-brand-600 bg-brand-500/20' : 'border-white/10'}`}
               >
                 {m} min
               </button>
@@ -150,7 +150,7 @@ export function Onboarding() {
             type="number"
             min={1}
             placeholder="Custom minutes / अन्य मिनट"
-            className="w-full rounded-xl border border-gray-300 p-3"
+            className="w-full rounded-xl border border-white/20 p-3"
             value={customMinutes}
             onChange={(e) => {
               setCustomMinutes(e.target.value)
