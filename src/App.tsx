@@ -15,7 +15,11 @@ export default function App() {
   const profile = useProfile()
 
   useEffect(() => {
-    seedDatabaseIfNeeded().then(() => setReady(true))
+    seedDatabaseIfNeeded()
+      .catch((err) => {
+        console.error('Database seeding failed:', err)
+      })
+      .finally(() => setReady(true))
   }, [])
 
   useEffect(() => {
