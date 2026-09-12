@@ -8,14 +8,15 @@ import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
 import { bi, useLang } from '@/lib/i18n'
 import { formatSeconds } from '@/lib/utils'
+import type { Question } from '@/types'
 
 export function MockTestRunner() {
   const { sessionId } = useParams()
   const { lang, setLang } = useLang()
   const navigate = useNavigate()
   const session = useSession(sessionId)
-  const questions = useLiveQuery(
-    () => (session ? db.questions.where('id').anyOf(session.questionIds).toArray() : Promise.resolve([])),
+  const questions: Question[] = useLiveQuery(
+    async (): Promise<Question[]> => (session ? db.questions.where('id').anyOf(session.questionIds).toArray() : []),
     [session?.id]
   ) ?? []
 
