@@ -16,14 +16,14 @@ export function ImportantQuestions() {
   return (
     <div className="space-y-3 pb-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">{bi('Important Questions', 'महत्वपूर्ण प्रश्न', lang)}</h1>
+        <h1 className="text-lg font-bold text-white">{bi('Important Questions', 'महत्वपूर्ण प्रश्न', lang)}</h1>
         <Button size="sm" onClick={() => navigate('/practice?mode=important')}>{bi('Practice these', 'इनका अभ्यास करें', lang)}</Button>
       </div>
-      {list.length === 0 && <p className="text-sm text-gray-500">{bi('Mark questions important during practice to see them here.', 'अभ्यास के दौरान प्रश्नों को महत्वपूर्ण चिह्नित करें ताकि वे यहां दिखें।', lang)}</p>}
+      {list.length === 0 && <p className="text-sm text-gray-400">{bi('Mark questions important during practice to see them here.', 'अभ्यास के दौरान प्रश्नों को महत्वपूर्ण चिह्नित करें ताकि वे यहां दिखें।', lang)}</p>}
       {list.map((q) => (
         <Card key={q.id}>
           <CardContent className="flex items-start justify-between gap-2">
-            <p className="text-sm text-gray-800">{bi(q.questionEn, q.questionHi, lang)}</p>
+            <p className="text-sm text-white">{bi(q.questionEn, q.questionHi, lang)}</p>
             <button onClick={() => toggleQuestionImportant(q.id, false)}>
               <Star size={18} className="fill-amber-500 text-amber-500" />
             </button>
