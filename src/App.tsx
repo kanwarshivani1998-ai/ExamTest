@@ -6,6 +6,7 @@ import type { LangMode } from '@/types'
 import { seedDatabaseIfNeeded } from '@/db/seed'
 import { useProfile, recordDailyActivity } from '@/hooks/useProfile'
 import { AppRouter } from '@/app/router'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 const queryClient = new QueryClient()
 
@@ -42,7 +43,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <LangContext.Provider value={{ lang, setLang }}>
         <HashRouter>
-          <AppRouter />
+          <ErrorBoundary>
+            <AppRouter />
+          </ErrorBoundary>
         </HashRouter>
       </LangContext.Provider>
     </QueryClientProvider>
