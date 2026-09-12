@@ -20,12 +20,13 @@ import { Backup } from '@/features/backup/Backup'
 import { Settings } from '@/features/settings/Settings'
 import { About } from '@/pages/About'
 import { ProgressPage } from '@/pages/Progress'
+import { More } from '@/pages/More'
 
 export function AppRouter() {
   const profile = useProfile()
 
   if (profile === undefined) {
-    return <div className="flex h-screen items-center justify-center text-sm text-gray-400">…</div>
+    return <div className="flex h-screen items-center justify-center text-sm text-gray-300">…</div>
   }
   if (!profile?.onboardingCompleted) {
     return <Onboarding />
@@ -60,6 +61,7 @@ export function AppRouter() {
               <Route path="/backup" element={<Backup />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/about" element={<About />} />
+              <Route path="/more" element={<More />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AppShell>
